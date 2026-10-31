@@ -5,17 +5,17 @@
     <key>CFBundleDevelopmentRegion</key>
     <string>en</string>
     <key>CFBundleExecutable</key>
-    <string>Snick</string>
+    <string>ThockPlus</string>
     <key>CFBundleIconFile</key>
     <string>AppIcon</string>
     <key>CFBundleIdentifier</key>
-    <string>xyz.trysnick.open</string>
+    <string>com.thockplus.app</string>
     <key>CFBundleInfoDictionaryVersion</key>
     <string>6.0</string>
     <key>CFBundleName</key>
-    <string>Snick</string>
+    <string>Thock+</string>
     <key>CFBundleDisplayName</key>
-    <string>Snick</string>
+    <string>Thock+</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>
@@ -31,6 +31,6 @@
     <key>NSHighResolutionCapable</key>
     <true/>
     <key>NSHumanReadableCopyright</key>
-    <string>Open source (MIT License). Based on trysnick.xyz</string>
+    <string>Thock+ · Open Source (MIT License)</string>
 </dict>
 </plist>

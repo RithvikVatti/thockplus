@@ -6,5 +6,6 @@ DerivedData/
 .swiftpm/configuration/registries.json
 .swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata
 .netrc
-Snick.app/
+*.app/
 *.iconset/
+Resources/thock_orig_icon.png

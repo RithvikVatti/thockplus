@@ -9,14 +9,15 @@ if [ ! -w "/Applications" ]; then
     mkdir -p "$TARGET_DIR"
 fi
 
-echo "🚀 Installing Snick to $TARGET_DIR..."
+echo "🚀 Installing Thock+ to $TARGET_DIR..."
 # Kill any running instance first
+pkill -x ThockPlus 2>/dev/null || true
 pkill -x Snick 2>/dev/null || true
 
-rm -rf "$TARGET_DIR/Snick.app"
-cp -R Snick.app "$TARGET_DIR/"
+rm -rf "$TARGET_DIR/Thock+.app"
+cp -R "Thock+.app" "$TARGET_DIR/"
 
-echo "🎉 Snick installed into $TARGET_DIR/Snick.app"
-echo "   Opening Snick now..."
-open "$TARGET_DIR/Snick.app"
+echo "🎉 Thock+ installed into $TARGET_DIR/Thock+.app"
+echo "   Opening Thock+ now..."
+open "$TARGET_DIR/Thock+.app"
 echo "✨ Remember to grant Accessibility permissions in System Settings -> Privacy & Security -> Accessibility!"

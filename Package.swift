@@ -2,19 +2,19 @@
 import PackageDescription
 
 let package = Package(
-    name: "Snick",
+    name: "ThockPlus",
     platforms: [
         .macOS(.v14)
     ],
     products: [
-        .executable(name: "Snick", targets: ["Snick"])
+        .executable(name: "ThockPlus", targets: ["ThockPlus"])
     ],
     targets: [
         .executableTarget(
-            name: "Snick",
-            path: "Sources/Snick",
+            name: "ThockPlus",
+            path: "Sources/ThockPlus",
             resources: [
-                .process("Resources")
+                .copy("Resources")
             ]
         )
     ]

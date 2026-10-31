@@ -246,3 +246,24 @@ document.addEventListener('DOMContentLoaded', () => {
   setupUI();
   loadAudioBuffers();
 });
+// Setup Keyboard & Mouse Test in Browser
+function setupKeyboardMouseTest() {
+  const kbInput = document.getElementById('keyboardTestInput');
+  const mouseBtn = document.getElementById('mouseTestBtn');
+
+  if (kbInput) {
+    kbInput.addEventListener('keydown', (e) => {
+      // Play mechanical sound
+      playVoice(currentVoice, 1.2);
+    });
+  }
+
+  if (mouseBtn) {
+    mouseBtn.addEventListener('mousedown', () => {
+      playVoice(currentVoice, 1.3);
+    });
+  }
+}
+
+// Ensure it runs after DOM loaded
+window.addEventListener('load', setupKeyboardMouseTest);

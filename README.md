@@ -1,107 +1,126 @@
-# OpenSnick 🔊 ✨
+<div align="center">
+  <img src="docs/banner.png" alt="Thock+ Banner" width="100%">
+  <br/><br/>
+  
+  <p align="center">
+    <strong>The all-in-one mechanical sound &amp; hardware haptic companion for macOS.</strong><br/>
+    Brings the satisfying auditory and tactile feedback of mechanical keyboards, mouse clicks, and scroll wheel detents to your Mac.
+  </p>
 
-> An open-source, native macOS menu bar app that turns every scroll into a satisfying tactile experience.  
-> Directly inspired by and fully compatible with [trysnick.xyz](https://trysnick.xyz/), with all 7 original mechanical detent voices extracted directly from the website.
-
-[![macOS 14+](https://img.shields.io/badge/macOS-14%2B%20Sonoma%20%2F%20Sequoia-blue?logo=apple)](https://www.apple.com/macos/)
-[![Swift 5.9+](https://img.shields.io/badge/Swift-5.9%2B-F05138?logo=swift)](https://swift.org)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
----
-
-## 💡 What is OpenSnick?
-
-OpenSnick is a lightweight macOS utility that lives quietly in your menu bar. As you scroll anywhere on your Mac—in Safari, Chrome, Finder, Slack, or Xcode—it plays micro-acoustic mechanical detent clicks and triggers real Force Touch trackpad haptics in exact lockstep with your fingers.
-
-Instead of paying for commercial proprietary apps, OpenSnick is **100% free, open-source, and offline**.
-
----
-
-## ✨ Features
-
-- **All 7 Original Voices Extracted from `trysnick.xyz`**:
-  - 🟣 **Nok** (`#6366f1`): Crisp detent (Default)
-  - 🟣 **Vyl** (`#a855f7`): Vinyl tick
-  - 🟢 **Glu** (`#14b8a6`): Gluey pop
-  - 🟠 **Dib** (`#f97316`): Tight blip
-  - 🔵 **Plo** (`#3b82f6`): Low plop
-  - 🩵 **Tok** (`#2dd4bf`): Wooden tok
-  - 🔴 **Rub** (`#ef4444`): Rubber snap
-- **Force Touch Trackpad Haptics**: Sends real physical detent impulses through your Apple trackpad via `NSHapticFeedbackManager`.
-- **Velocity-Aware Audio Engine**: Dynamically measures scroll speed. Slow scrolls whisper gently with fine control; fast flings snap with crisp authority.
-- **Zero-Latency Audio Pipeline**: Keeps a pre-warmed pool of low-latency players in memory. Even rapid flings at 120Hz ProMotion never lag or drop clicks.
-- **Stepped Mouse Wheel Support**: Immediate tactile clicks on every discrete notch of external mice (Logitech, Razer, USB mice).
-- **Momentum Coasting Control**: Toggle whether clicks continue during inertial fling coasting or only while your fingers are actively on the trackpad.
-- **Native macOS Menu Bar Interface**: Beautiful popover UI built with SwiftUI and AppKit with volume slider, spacing tuning, live test area, and status indicator.
-- **Launch at Login**: Modern `SMAppService` integration for automatic startup without background agent bloat.
-- **Offline & Private**: Never connects to the network. Requires no account and sends zero telemetry.
-- **Web Companion Demo**: Includes a browser-based web simulator (`Web/index.html`) using HTML5 and the Web Audio API.
+  <p align="center">
+    <a href="https://www.apple.com/macos/"><img src="https://img.shields.io/badge/macOS-14%2B%20Sonoma%20%2F%20Sequoia-blue?logo=apple" alt="macOS 14+"></a>
+    <a href="https://swift.org"><img src="https://img.shields.io/badge/Swift-5.9%2B-F05138?logo=swift" alt="Swift 5.9+"></a>
+    <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="MIT License"></a>
+    <a href="#install"><img src="https://img.shields.io/badge/Menu%20Bar-Zero%20Clutter-10b981" alt="Menu Bar"></a>
+  </p>
+</div>
 
 ---
 
-## 🛠️ Architecture & How It Works
+## ⚡ What is Thock+?
 
-### 1. Scroll Detent Algorithm
-The algorithm accurately maps continuous pixel deltas from macOS trackpads to physical detent notches:
+**Thock+** combines the best of mechanical keyboard audio utilities (like `thock`) and mechanical scroll detent utilities (like `snick`) into a single, unified, ultra-fast macOS menu bar application.
 
-$$\text{velocity} = \frac{|\Delta y|}{\max(1, \Delta t)}$$
-$$\text{gain} = \min(1.0, 0.25 + \text{velocity} \times 0.18) \times \text{volume}$$
-
-When accumulated scroll distance passes `notchSpacing` (default: 30px) and at least `rateLimitMs` (default: 18ms) has elapsed:
-1. `accumulatedDelta` resets modulo `notchSpacing`.
-2. The preloaded audio buffer plays with the velocity-scaled gain.
-3. The Force Touch trackpad solenoid is pulsed with `.generic` haptic feedback.
-
-### 2. Global Event Interception
-macOS restricts global event listening for security. OpenSnick uses `NSEvent.addGlobalMonitorForEvents(matching: .scrollWheel)` combined with `NSEvent.addLocalMonitorForEvents` and a `CGEventTap` listener.
-- When Accessibility permission is granted in **System Settings → Privacy & Security → Accessibility**, OpenSnick intercepts scroll deltas system-wide.
-- If permission has not been granted yet, a friendly banner in the menu bar popover guides you with a single-click shortcut to System Settings.
+Instead of running separate tools or paying for commercial closed-source apps, **Thock+** delivers:
+1. **Mechanical Keyboard Audio**: High-fidelity mechanical switch audio on key down and key release.
+2. **Mouse Click Audio**: Tactile micro-switch clicks on mouse button press and release.
+3. **Scroll Wheel Detents & Hardware Haptics**: Deep mechanical clicks across 7 distinct voices plus **true hardware Force Touch trackpad solenoid oscillation** on every scroll notch.
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Comparison
 
-### Option A: Build and Run with 1 Command
-To compile the standalone macOS application bundle:
-```bash
-./build.sh
-open Snick.app
-```
+| Feature | Original Thock | Snick ($12) | **Thock+ (Open Source)** |
+| :--- | :---: | :---: | :---: |
+| **Mechanical Keyboard Sounds** | ✅ | ❌ | ✅ (Key-down & Key-up) |
+| **Mouse Click Sounds** | ✅ | ❌ | ✅ (Left, Right, Middle) |
+| **Scroll Detent Clicks** | ❌ | ✅ | ✅ (All 7 Hand-Tuned Voices) |
+| **Real Trackpad Hardware Haptics** | ❌ | ⚠️ Occasional | ✅ **Accurate Hardware `MTActuator`** |
+| **Wheel Ratchet Oscillations** | ❌ | ❌ | ✅ **Yes (Solenoid Oscillation)** |
+| **Velocity-Aware Volume Scaling** | ❌ | ✅ | ✅ |
+| **100% Free & Open Source** | ✅ | ❌ Commercial | ✅ **MIT License** |
+| **Offline & Zero Telemetry** | ✅ | ❌ License check | ✅ **100% Offline** |
 
-### Option B: Install into Applications
-To build and install `Snick.app` into `/Applications` (or `~/Applications`):
+---
+
+## ✨ Features Breakdown
+
+### 🔄 1. Scroll Detents & Accurate Hardware Haptics
+Directly inspired by [trysnick.xyz](https://trysnick.xyz/), with all 7 original mechanical detent voices extracted directly from the web client:
+- 🟣 **Nok** (`#6366f1`): Crisp mechanical detent (Default)
+- 🟣 **Vyl** (`#a855f7`): Vinyl tick
+- 🟢 **Glu** (`#14b8a6`): Gluey pop
+- 🟠 **Dib** (`#f97316`): Tight blip
+- 🔵 **Plo** (`#3b82f6`): Low plop
+- 🩵 **Tok** (`#2dd4bf`): Wooden tok
+- 🔴 **Rub** (`#ef4444`): Rubber snap
+
+#### 🛠️ Direct `MTActuator` Hardware Solenoid Control
+Unlike standard apps that use Apple's high-level `NSHapticFeedbackManager` (which macOS WindowServer throttles or drops in background apps), **Thock+** communicates directly with the MacBook and Magic Trackpad Taptic Engine via IOKit `AppleMultitouchDevice` and `MTActuatorActuate`:
+- **Wheel Ratchet Mode**: Produces an oscillating micro-vibration on every single scroll notch, making your smooth glass trackpad physically feel like a heavy notched scroll wheel!
+- **Zero Missed Detents**: Full sub-pixel accumulation math ensures every single notch registers with crisp tactile confirmation.
+- **5 Selectable Haptic Feels**:
+  - 🌀 **Wheel Ratchet** (Oscillating detent)
+  - ⚡ **Crisp Detent** (Mechanical notch)
+  - 🪶 **Light Tick** (Subtle tick)
+  - 🔘 **Medium Click** (Standard detent)
+  - 💥 **Firm Thock** (Heavy tactile bump)
+
+### ⌨️ 2. Mechanical Keyboard Switches
+- Crisp mechanical typing feedback on key press and key release.
+- Specialized audio samples for `Space`, `Enter`, and `Backspace`.
+- Built-in Alps SKCM Blue & Cherry switch profiles.
+- Independent volume control and switch release toggle.
+
+### 🖱️ 3. Mechanical Mouse Clicks
+- Micro-switch audio on left, right, and middle mouse clicks.
+- Built-in Razer Orochi V2 profile.
+- Separate press and release audio.
+
+---
+
+## 📦 Quick Start & Installation
+
+### Option 1: 1-Click Install into Applications
 ```bash
 ./install.sh
 ```
+This compiles the release binary, creates `Thock+.app`, codesigns it ad-hoc, and installs it into `/Applications`.
 
-### Option C: Run via Swift Package Manager
+### Option 2: Build Locally
 ```bash
-swift run Snick
+./build.sh
+open "Thock+.app"
+```
+
+### Option 3: Swift Package Manager
+```bash
+swift run ThockPlus
 ```
 
 ---
 
 ## ⚙️ Granting Accessibility Permission
 
-1. Launch `Snick.app`.
-2. Click the Snick waveform icon in your menu bar.
-3. If accessibility is needed, click **"Grant Permission"** or **"Open Settings"**.
-4. In macOS **System Settings → Privacy & Security → Accessibility**, toggle **Snick** to **ON**.
-5. The status badge in Snick will immediately turn green (**Active**), and every scroll will now click!
+macOS restricts global event detection across applications for security:
+1. Launch `Thock+.app`.
+2. Click the **T+** icon in your menu bar.
+3. Click **"Grant Permission"** to open **System Settings → Privacy & Security → Accessibility**.
+4. Toggle **Thock+** to **ON**.
+5. The status badge will immediately illuminate green (**Active**).
 
-> **Tip:** You can **Option-Click** the menu bar icon anytime to instantly toggle Snick On/Off!
+> 💡 **Pro-Tip**: **Option-Click** the **T+** menu bar icon anytime to instantly toggle all audio and haptics On/Off!
 
 ---
 
-## 🌐 Web Demo / Simulator
+## 🌐 Web Companion Simulator
 
-You can test the exact sounds and scroll detents in any web browser without compiling:
-
+Test the keyboard, mouse, and scroll detent audio right in your web browser:
 ```bash
 cd Web
 python3 -m http.server 8000
 ```
-Then visit `http://localhost:8000`.
+Open `http://localhost:8000` in Safari, Chrome, or Firefox.
 
 ---
 
@@ -109,22 +128,34 @@ Then visit `http://localhost:8000`.
 
 ```
 .
-├── Package.swift               # Swift Package Manager definition
-├── build.sh                    # Compiles release binary and packages Snick.app
-├── install.sh                  # Installs Snick.app to /Applications
+├── Package.swift               # Swift Package Manager manifest
+├── build.sh                    # Compiles release binary and creates Thock+.app
+├── install.sh                  # Builds and installs to /Applications
 ├── README.md                   # Documentation
 ├── LICENSE                     # MIT License
+├── docs/
+│   ├── logo.png                # Thock+ logo with T+ badge
+│   └── banner.png              # GitHub social preview banner
 ├── Sources/
-│   └── Snick/
-│       ├── App/                # App entry point, delegate, status item controller
-│       ├── Core/               # Audio engine, haptics, scroll monitoring & processing
-│       ├── Models/             # Settings, sound catalog & voice definitions
-│       └── UI/                 # SwiftUI popover, voice selector, test scroll area
+│   └── ThockPlus/
+│       ├── App/                # App delegate, entry point, status item controller
+│       ├── Core/
+│       │   ├── HardwareHapticEngine.swift   # IOKit & MTActuator hardware solenoid driver
+│       │   ├── InputMonitor.swift           # Unified scroll, keyboard & mouse event listener
+│       │   ├── KeyboardMouseEngine.swift    # Mechanical keyboard & mouse audio engine
+│       │   ├── ScrollProcessor.swift        # Detent accumulation & velocity scaling math
+│       │   ├── SoundEngine.swift            # 7-voice scroll detent audio engine
+│       │   └── SoundCatalog.swift           # Voice definitions & color palette
+│       ├── Models/             # Settings & sound voice models
+│       └── UI/                 # SwiftUI popover, voice picker, interactive test area
 ├── Resources/
-│   ├── AppIcon.icns            # Generated high-resolution macOS application icon
-│   ├── MenuBarIcon*.png        # Adaptive template icon for menu bar
-│   ├── Info.plist              # macOS application metadata (LSUIElement = true)
-│   └── Sounds/                 # All 7 extracted WAV files (nok, vyl, glu, dib, plo, tok, rub)
+│   ├── AppIcon.icns            # Generated macOS application icon with T+ badge
+│   ├── MenuBarIcon*.png        # Adaptive T+ template icon for menu bar
+│   ├── Info.plist              # macOS bundle configuration
+│   └── Sounds/
+│       ├── Keyboard/           # Alps SKCM Blue switch audio files
+│       ├── Mouse/              # Razer Orochi V2 click audio files
+│       └── *.wav               # 7 mechanical scroll detent audio files
 └── Web/                        # Interactive web companion demo
     ├── index.html
     ├── style.css
@@ -136,5 +167,9 @@ Then visit `http://localhost:8000`.
 
 ## 📄 License
 
-OpenSnick is licensed under the **[MIT License](LICENSE)**. Free for personal, academic, and commercial use.
-Original audio design inspiration credit goes to [trysnick.xyz](https://trysnick.xyz/).
+Thock+ is open-source software licensed under the **[MIT License](LICENSE)**.
+
+### Acknowledgments
+- Inspired by [kamillobinski/thock](https://github.com/kamillobinski/thock) for mechanical typing audio.
+- Sound voice design and audio samples extracted from [trysnick.xyz](https://trysnick.xyz/).
+- Multitouch actuator insights from [niw/HapticKey](https://github.com/niw/HapticKey).
