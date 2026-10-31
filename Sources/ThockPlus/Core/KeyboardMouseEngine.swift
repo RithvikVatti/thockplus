@@ -9,6 +9,9 @@ public final class KeyboardMouseEngine: @unchecked Sendable {
     private var players: [String: [AVAudioPlayer]] = [:]
     private var indices: [String: Int] = [:]
     
+    private var activeKeyboardFolder: URL?
+    private var activeMouseFolder: URL?
+    
     private init() {
         preloadAudio()
     }
@@ -17,13 +20,13 @@ public final class KeyboardMouseEngine: @unchecked Sendable {
         queue.async { [weak self] in
             guard let self = self else { return }
             
-            // Keyboard sounds
+            // Default bundled Keyboard sounds
             let kbSounds = ["1", "2", "3", "4", "5", "101", "102", "201", "251", "301", "351", "401", "451"]
             for s in kbSounds {
                 self.preload(category: "Keyboard", name: s, poolSize: 4)
             }
             
-            // Mouse sounds
+            // Default bundled Mouse sounds
             let mouseSounds = ["1", "2", "3", "4"]
             for s in mouseSounds {
                 self.preload(category: "Mouse", name: s, poolSize: 4)
@@ -31,9 +34,30 @@ public final class KeyboardMouseEngine: @unchecked Sendable {
         }
     }
     
-    private func preload(category: String, name: String, poolSize: Int) {
-        guard let url = locateSoundURL(category: category, name: name) else { return }
-        let key = "\(category)/\(name)"
+    public func loadActivePacks(keyboardPackURL: URL, mousePackURL: URL) {
+        queue.async { [weak self] in
+            guard let self = self else { return }
+            self.activeKeyboardFolder = keyboardPackURL
+            self.activeMouseFolder = mousePackURL
+            
+            // Preload files from active packs
+            if let files = try? FileManager.default.contentsOfDirectory(at: keyboardPackURL, includingPropertiesForKeys: nil) {
+                for file in files where file.pathExtension == "wav" {
+                    let key = "Keyboard/\(file.deletingPathExtension().lastPathComponent)"
+                    self.preloadURL(key: key, url: file, poolSize: 4)
+                }
+            }
+            
+            if let files = try? FileManager.default.contentsOfDirectory(at: mousePackURL, includingPropertiesForKeys: nil) {
+                for file in files where file.pathExtension == "wav" {
+                    let key = "Mouse/\(file.deletingPathExtension().lastPathComponent)"
+                    self.preloadURL(key: key, url: file, poolSize: 4)
+                }
+            }
+        }
+    }
+    
+    private func preloadURL(key: String, url: URL, poolSize: Int) {
         var pool: [AVAudioPlayer] = []
         for _ in 0..<poolSize {
             if let p = try? AVAudioPlayer(contentsOf: url) {
@@ -45,6 +69,11 @@ public final class KeyboardMouseEngine: @unchecked Sendable {
             players[key] = pool
             indices[key] = 0
         }
+    }
+    
+    private func preload(category: String, name: String, poolSize: Int) {
+        guard let url = locateSoundURL(category: category, name: name) else { return }
+        preloadURL(key: "\(category)/\(name)", url: url, poolSize: poolSize)
     }
     
     public func playKeyDown(keyCode: UInt16, volume: Double) {
@@ -87,7 +116,7 @@ public final class KeyboardMouseEngine: @unchecked Sendable {
     public func playMouseDown(button: Int, volume: Double) {
         queue.async { [weak self] in
             guard let self = self else { return }
-            let name = (button == 1) ? "3" : "1" // 1 = right, 0 = left
+            let name = (button == 1) ? "3" : "1"
             self.playPooled(category: "Mouse", name: name, volume: Float(volume))
         }
     }

@@ -122,6 +122,19 @@ public struct MenuBarView: View {
             
             Spacer()
             
+            // Gear icon to open full Settings Window
+            Button(action: {
+                SettingsWindowController.shared.show(tab: .soundpacks)
+            }) {
+                Image(systemName: "gearshape.fill")
+                    .font(.system(size: 13))
+                    .foregroundColor(.secondary)
+                    .padding(5)
+                    .background(Circle().fill(Color.primary.opacity(0.06)))
+            }
+            .buttonStyle(.plain)
+            .help("Open Thock+ Settings & Soundpacks (⌘,)")
+            
             Toggle("", isOn: $settings.isEnabled)
                 .labelsHidden()
                 .toggleStyle(SwitchToggleStyle(tint: .accentColor))
@@ -206,9 +219,14 @@ public struct MenuBarView: View {
     // MARK: - Footer
     private var footerView: some View {
         HStack {
-            Text("Thock+ · Open Source")
-                .font(.system(size: 10))
-                .foregroundColor(.secondary)
+            Button(action: {
+                SettingsWindowController.shared.show(tab: .soundpacks)
+            }) {
+                Label("Settings & Soundpacks...", systemImage: "music.note.list")
+                    .font(.system(size: 11, weight: .medium))
+            }
+            .buttonStyle(.plain)
+            .foregroundColor(.accentColor)
             
             Spacer()
             

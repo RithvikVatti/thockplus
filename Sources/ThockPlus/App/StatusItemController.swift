@@ -35,6 +35,12 @@ public final class StatusItemController: NSObject {
     @objc private func statusBarButtonClicked(_ sender: NSStatusBarButton) {
         let event = NSApp.currentEvent
         
+        // Right-click opens quick menu
+        if event?.type == .rightMouseUp {
+            showContextMenu(sender)
+            return
+        }
+        
         // Option + Click toggles enabled directly
         if event?.modifierFlags.contains(.option) == true {
             let s = AppSettings.shared
@@ -45,6 +51,54 @@ public final class StatusItemController: NSObject {
         }
         
         togglePopover(sender)
+    }
+    
+    private func showContextMenu(_ sender: NSStatusBarButton) {
+        let menu = NSMenu()
+        
+        let toggleItem = NSMenuItem(
+            title: AppSettings.shared.isEnabled ? "Mute Thock+" : "Enable Thock+",
+            action: #selector(toggleEnabled),
+            keyEquivalent: ""
+        )
+        toggleItem.target = self
+        menu.addItem(toggleItem)
+        
+        menu.addItem(NSMenuItem.separator())
+        
+        let settingsItem = NSMenuItem(
+            title: "Settings & Soundpacks...",
+            action: #selector(openSettingsWindow),
+            keyEquivalent: ","
+        )
+        settingsItem.target = self
+        menu.addItem(settingsItem)
+        
+        menu.addItem(NSMenuItem.separator())
+        
+        let quitItem = NSMenuItem(
+            title: "Quit Thock+",
+            action: #selector(quitApp),
+            keyEquivalent: "q"
+        )
+        quitItem.target = self
+        menu.addItem(quitItem)
+        
+        statusItem?.menu = menu
+        statusItem?.button?.performClick(nil)
+        statusItem?.menu = nil // restore button action
+    }
+    
+    @objc private func toggleEnabled() {
+        AppSettings.shared.isEnabled.toggle()
+    }
+    
+    @objc private func openSettingsWindow() {
+        SettingsWindowController.shared.show(tab: .soundpacks)
+    }
+    
+    @objc private func quitApp() {
+        NSApplication.shared.terminate(nil)
     }
     
     public func togglePopover(_ sender: AnyObject?) {
@@ -85,7 +139,6 @@ public final class StatusItemController: NSObject {
             }
         }
         
-        // T+ Vector fallback
         let size = NSSize(width: 18, height: 18)
         let image = NSImage(size: size, flipped: false) { rect in
             let fontT = NSFont.systemFont(ofSize: 13, weight: .heavy)
