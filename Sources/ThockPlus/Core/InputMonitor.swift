@@ -62,6 +62,14 @@ public final class InputMonitor: @unchecked Sendable {
     }
     
     private func handleScrollEvent(_ event: NSEvent) {
+        // If gesture ended or cancelled, reset accumulator so nothing lingers
+        let isEnded = event.phase.contains(.ended) || event.phase.contains(.cancelled) ||
+                      event.momentumPhase.contains(.ended) || event.momentumPhase.contains(.cancelled)
+        if isEnded {
+            self.scrollProcessor.reset()
+            return
+        }
+        
         let isContinuous = event.hasPreciseScrollingDeltas
         let isMomentum = event.momentumPhase.contains(.began) || event.momentumPhase.contains(.changed)
         let deltaY = Double(event.scrollingDeltaY)
@@ -76,6 +84,7 @@ public final class InputMonitor: @unchecked Sendable {
                 voiceId: s.selectedVoiceId,
                 volume: s.scrollVolume,
                 notchSpacing: s.notchSpacing,
+                rateLimitMs: s.rateLimitMs,
                 enableHaptics: s.enableHaptics,
                 hapticFeel: s.hapticFeel,
                 enableMomentum: s.enableMomentum,

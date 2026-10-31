@@ -31,6 +31,10 @@ public final class AppSettings: ObservableObject {
         didSet { defaults.set(notchSpacing, forKey: "notchSpacing") }
     }
     
+    @Published public var rateLimitMs: Double {
+        didSet { defaults.set(rateLimitMs, forKey: "rateLimitMs") }
+    }
+    
     @Published public var enableHaptics: Bool {
         didSet { defaults.set(enableHaptics, forKey: "enableHaptics") }
     }
@@ -84,6 +88,7 @@ public final class AppSettings: ObservableObject {
             "selectedVoiceId": "nok",
             "scrollVolume": 0.75,
             "notchSpacing": 16.0,
+            "rateLimitMs": 22.0,
             "enableHaptics": true,
             "hapticFeel": "ratchet",
             "enableMomentum": true,
@@ -100,6 +105,7 @@ public final class AppSettings: ObservableObject {
         self.selectedVoiceId = defaults.string(forKey: "selectedVoiceId") ?? "nok"
         self.scrollVolume = defaults.double(forKey: "scrollVolume")
         self.notchSpacing = defaults.double(forKey: "notchSpacing")
+        self.rateLimitMs = defaults.double(forKey: "rateLimitMs") == 0 ? 22.0 : defaults.double(forKey: "rateLimitMs")
         self.enableHaptics = defaults.bool(forKey: "enableHaptics")
         self.hapticFeel = defaults.string(forKey: "hapticFeel") ?? "ratchet"
         self.enableMomentum = defaults.bool(forKey: "enableMomentum")

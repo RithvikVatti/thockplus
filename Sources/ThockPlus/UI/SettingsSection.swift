@@ -60,6 +60,34 @@ struct SettingsSection: View {
                         }
                     }
                     
+                    // Max Speed & Cadence Limiter (Prevents sound spamming on hard flings)
+                    VStack(alignment: .leading, spacing: 3) {
+                        HStack {
+                            Text("Max Detent Speed Limit")
+                                .font(.system(size: 11, weight: .medium))
+                                .foregroundColor(.secondary)
+                            Spacer()
+                            Text("\(Int(1000.0 / settings.rateLimitMs)) clicks/sec")
+                                .font(.system(size: 11, weight: .semibold, design: .rounded))
+                                .foregroundColor(.secondary)
+                        }
+                        Slider(value: $settings.rateLimitMs, in: 16.0...45.0, step: 2.0)
+                            .tint(.accentColor)
+                        HStack {
+                            Text("Fast (16ms)")
+                                .font(.system(size: 9))
+                                .foregroundColor(.secondary)
+                            Spacer()
+                            Text("Default (22ms)")
+                                .font(.system(size: 9))
+                                .foregroundColor(.secondary)
+                            Spacer()
+                            Text("Calm (45ms)")
+                                .font(.system(size: 9))
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                    
                     // Hardware Haptics
                     Toggle(isOn: $settings.enableHaptics) {
                         VStack(alignment: .leading, spacing: 1) {

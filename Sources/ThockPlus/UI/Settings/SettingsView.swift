@@ -400,6 +400,33 @@ struct ScrollHapticsSettingsPane: View {
                 }
                 .padding(14)
                 .background(RoundedRectangle(cornerRadius: 12).fill(Color.primary.opacity(0.03)))
+                
+                // Max Speed / Cadence Limiter
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        Text("Max Detent Speed Limit (Rate Limiter):")
+                            .font(.system(size: 12, weight: .medium))
+                        Spacer()
+                        Text("\(Int(1000.0 / settings.rateLimitMs)) clicks/sec (\(Int(settings.rateLimitMs))ms)")
+                            .font(.system(size: 12, weight: .bold, design: .rounded))
+                    }
+                    Slider(value: $settings.rateLimitMs, in: 16.0...45.0, step: 2.0)
+                    HStack {
+                        Text("Fast (16ms) · Smooth high speed")
+                            .font(.system(size: 10))
+                            .foregroundColor(.secondary)
+                        Spacer()
+                        Text("Default (22ms)")
+                            .font(.system(size: 10))
+                            .foregroundColor(.secondary)
+                        Spacer()
+                        Text("Calm (45ms) · Heavy resistance")
+                            .font(.system(size: 10))
+                            .foregroundColor(.secondary)
+                    }
+                }
+                .padding(14)
+                .background(RoundedRectangle(cornerRadius: 12).fill(Color.primary.opacity(0.03)))
             }
             .padding(24)
         }
