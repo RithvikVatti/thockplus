@@ -125,13 +125,20 @@ public final class AppSettings: ObservableObject {
     }
     
     public func refreshAccessibility() {
-        self.isAccessibilityGranted = AXIsProcessTrusted()
+        let trusted = AXIsProcessTrusted()
+        self.isAccessibilityGranted = trusted
+        if trusted {
+            InputMonitor.shared.restart()
+        }
     }
     
     public func requestAccessibility() {
         let options: NSDictionary = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true]
-        _ = AXIsProcessTrustedWithOptions(options)
-        refreshAccessibility()
+        let trusted = AXIsProcessTrustedWithOptions(options)
+        self.isAccessibilityGranted = trusted
+        if trusted {
+            InputMonitor.shared.restart()
+        }
     }
     
     public func openAccessibilitySettings() {
@@ -141,12 +148,15 @@ public final class AppSettings: ObservableObject {
     }
     
     private func startMonitoringAccessibility() {
-        permissionTimer = Timer.scheduledTimer(withTimeInterval: 1.5, repeats: true) { [weak self] _ in
+        permissionTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
             Task { @MainActor [weak self] in
                 guard let self = self else { return }
                 let trusted = AXIsProcessTrusted()
                 if self.isAccessibilityGranted != trusted {
                     self.isAccessibilityGranted = trusted
+                    if trusted {
+                        InputMonitor.shared.restart()
+                    }
                 }
             }
         }

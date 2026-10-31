@@ -40,9 +40,9 @@ if [ -d .build/release/ThockPlus_ThockPlus.bundle ]; then
     cp -R .build/release/ThockPlus_ThockPlus.bundle "$RESOURCES/"
 fi
 
-# Ad-hoc code signing for local execution on macOS
-echo "✍️  Ad-hoc codesigning $APP_NAME..."
-codesign --force --deep --sign - "$APP_NAME"
+# Stable designated requirement signing so macOS Accessibility permissions don't break on re-build
+echo "✍️  Codesigning $APP_NAME with stable designated requirement..."
+codesign --force --deep -s - -r="designated => identifier \"com.thockplus.app\"" "$APP_NAME"
 
 echo "✅ Successfully built $APP_NAME!"
 echo "   Run './$APP_NAME/Contents/MacOS/ThockPlus' or 'open \"$APP_NAME\"' to launch."

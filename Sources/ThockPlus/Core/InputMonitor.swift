@@ -16,6 +16,7 @@ public final class InputMonitor: @unchecked Sendable {
     private var globalMouseMonitor: Any?
     private var localMouseMonitor: Any?
     
+    private var retryTimer: Timer?
     private var isRunning: Bool = false
     
     private init() {}
@@ -24,21 +25,43 @@ public final class InputMonitor: @unchecked Sendable {
         guard !isRunning else { return }
         isRunning = true
         
-        setupScrollMonitors()
-        setupKeyboardMonitors()
-        setupMouseMonitors()
+        attachMonitors()
+        startWatchdog()
     }
     
     public func stop() {
         guard isRunning else { return }
         isRunning = false
         
+        retryTimer?.invalidate()
+        retryTimer = nil
         removeMonitors()
     }
     
     public func restart() {
-        stop()
-        start()
+        removeMonitors()
+        attachMonitors()
+    }
+    
+    private func startWatchdog() {
+        DispatchQueue.main.async { [weak self] in
+            self?.retryTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+                guard let self = self, self.isRunning else { return }
+                
+                // If accessibility is now trusted but global monitors failed to attach earlier, re-attach them now!
+                if AXIsProcessTrusted() {
+                    if self.globalScrollMonitor == nil || self.globalKeyMonitor == nil || self.globalMouseMonitor == nil {
+                        self.attachMonitors()
+                    }
+                }
+            }
+        }
+    }
+    
+    private func attachMonitors() {
+        setupScrollMonitors()
+        setupKeyboardMonitors()
+        setupMouseMonitors()
     }
     
     private func removeMonitors() {
@@ -52,17 +75,20 @@ public final class InputMonitor: @unchecked Sendable {
     
     // MARK: - Scroll
     private func setupScrollMonitors() {
-        globalScrollMonitor = NSEvent.addGlobalMonitorForEvents(matching: .scrollWheel) { [weak self] event in
-            self?.handleScrollEvent(event)
+        if globalScrollMonitor == nil {
+            globalScrollMonitor = NSEvent.addGlobalMonitorForEvents(matching: .scrollWheel) { [weak self] event in
+                self?.handleScrollEvent(event)
+            }
         }
-        localScrollMonitor = NSEvent.addLocalMonitorForEvents(matching: .scrollWheel) { [weak self] event in
-            self?.handleScrollEvent(event)
-            return event
+        if localScrollMonitor == nil {
+            localScrollMonitor = NSEvent.addLocalMonitorForEvents(matching: .scrollWheel) { [weak self] event in
+                self?.handleScrollEvent(event)
+                return event
+            }
         }
     }
     
     private func handleScrollEvent(_ event: NSEvent) {
-        // If gesture ended or cancelled, reset accumulator so nothing lingers
         let isEnded = event.phase.contains(.ended) || event.phase.contains(.cancelled) ||
                       event.momentumPhase.contains(.ended) || event.momentumPhase.contains(.cancelled)
         if isEnded {
@@ -102,12 +128,16 @@ public final class InputMonitor: @unchecked Sendable {
     
     // MARK: - Keyboard
     private func setupKeyboardMonitors() {
-        globalKeyMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.keyDown, .keyUp]) { [weak self] event in
-            self?.handleKeyEvent(event)
+        if globalKeyMonitor == nil {
+            globalKeyMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.keyDown, .keyUp]) { [weak self] event in
+                self?.handleKeyEvent(event)
+            }
         }
-        localKeyMonitor = NSEvent.addLocalMonitorForEvents(matching: [.keyDown, .keyUp]) { [weak self] event in
-            self?.handleKeyEvent(event)
-            return event
+        if localKeyMonitor == nil {
+            localKeyMonitor = NSEvent.addLocalMonitorForEvents(matching: [.keyDown, .keyUp]) { [weak self] event in
+                self?.handleKeyEvent(event)
+                return event
+            }
         }
     }
     
@@ -133,12 +163,16 @@ public final class InputMonitor: @unchecked Sendable {
             .otherMouseDown, .otherMouseUp
         ]
         
-        globalMouseMonitor = NSEvent.addGlobalMonitorForEvents(matching: mask) { [weak self] event in
-            self?.handleMouseEvent(event)
+        if globalMouseMonitor == nil {
+            globalMouseMonitor = NSEvent.addGlobalMonitorForEvents(matching: mask) { [weak self] event in
+                self?.handleMouseEvent(event)
+            }
         }
-        localMouseMonitor = NSEvent.addLocalMonitorForEvents(matching: mask) { [weak self] event in
-            self?.handleMouseEvent(event)
-            return event
+        if localMouseMonitor == nil {
+            localMouseMonitor = NSEvent.addLocalMonitorForEvents(matching: mask) { [weak self] event in
+                self?.handleMouseEvent(event)
+                return event
+            }
         }
     }
     
