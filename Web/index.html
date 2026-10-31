@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OpenSnick — Turn every scroll into a satisfying experience</title>
+  <meta name="description" content="Open-source macOS menu bar app that plays mechanical detent clicks and Force Touch haptics as you scroll. Includes all 7 sounds extracted from trysnick.xyz.">
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Fixed Floating Scroll Status Pill -->
+  <div class="fixed-pill-container">
+    <button id="toggleScrollSoundBtn" class="pill-btn" aria-pressed="true">
+      <span class="pill-dot active" id="pillDot"></span>
+      <span id="pillText">Scroll sound on · Scroll to hear</span>
+      <span class="pill-badge" id="pillVoice">Nok</span>
+    </button>
+  </div>
+
+  <div class="container">
+    <!-- Navigation -->
+    <header class="header">
+      <div class="logo">
+        <svg class="logo-icon" width="28" height="28" viewBox="0 0 1024 1024">
+          <defs>
+            <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#26282c"/>
+              <stop offset="1" stop-color="#0c0d0f"/>
+            </linearGradient>
+          </defs>
+          <rect x="32" y="32" width="960" height="960" rx="232" fill="url(#bgGrad)"/>
+          <g fill="#e7ecfb">
+            <rect x="280" y="296" width="64" height="432" rx="32"/>
+            <rect x="400" y="384" width="64" height="256" rx="32"/>
+            <rect x="480" y="456" width="64" height="112" rx="32"/>
+            <rect x="560" y="384" width="64" height="256" rx="32"/>
+            <rect x="680" y="296" width="64" height="432" rx="32"/>
+          </g>
+        </svg>
+        <span class="logo-text">OpenSnick</span>
+        <span class="version-tag">Open Source</span>
+      </div>
+      <nav class="nav-links">
+        <a href="#voices">Voices</a>
+        <a href="#features">Features</a>
+        <a href="#install">Install Mac App</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        100% Free &amp; Open Source · macOS 14+
+      </div>
+      <h1 class="hero-title">
+        Turn every <span class="highlight">scroll</span> into a satisfying experience
+      </h1>
+      <p class="hero-subtitle">
+        Deep, liquid detent clicks and real Force Touch trackpad haptics, perfectly synchronized with your fingers.
+      </p>
+
+      <div class="hero-actions">
+        <a href="#install" class="btn btn-primary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          Download Free Mac App
+        </a>
+        <button id="testClickBtn" class="btn btn-secondary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+          </svg>
+          Click to Preview Sound
+        </button>
+      </div>
+
+      <!-- Live Interactive Visualizer Card -->
+      <div class="interactive-card">
+        <div class="card-header">
+          <div class="card-title-group">
+            <div class="card-dot"></div>
+            <span>Live Detent Visualizer</span>
+          </div>
+          <div class="stats-group">
+            <span>Velocity: <strong id="velocityDisplay">0.0 px/ms</strong></span>
+            <span>Detent Clicks: <strong id="clickCounter">0</strong></span>
+          </div>
+        </div>
+
+        <div class="waveform-display" id="waveformDisplay">
+          <div class="bar" style="height: 40%"></div>
+          <div class="bar" style="height: 65%"></div>
+          <div class="bar" style="height: 90%"></div>
+          <div class="bar" style="height: 50%"></div>
+          <div class="bar" style="height: 75%"></div>
+          <div class="bar" style="height: 100%"></div>
+          <div class="bar" style="height: 60%"></div>
+          <div class="bar" style="height: 35%"></div>
+        </div>
+
+        <div class="controls-row">
+          <div class="control-group">
+            <label for="volumeSlider">Volume: <span id="volumeVal">72%</span></label>
+            <input type="range" id="volumeSlider" min="0" max="100" value="72">
+          </div>
+          <div class="control-group">
+            <label for="spacingSlider">Spacing: <span id="spacingVal">30px</span></label>
+            <input type="range" id="spacingSlider" min="12" max="60" value="30">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sound Voices Section -->
+    <section id="voices" class="section">
+      <div class="section-header">
+        <span class="section-tag">Seven Voices</span>
+        <h2>Hand-tuned mechanical detents</h2>
+        <p>Extracted directly from trysnick.xyz. Tap any card to switch voice and hear the tactile response.</p>
+      </div>
+
+      <div class="voices-grid" id="voicesGrid">
+        <!-- Injected via JavaScript -->
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="section">
+      <div class="section-header">
+        <span class="section-tag">Engineered for Feel</span>
+        <h2>Built to feel right, not like a beep</h2>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon" style="background: rgba(99, 102, 241, 0.15); color: #6366f1;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            </svg>
+          </div>
+          <h3>Mechanical Detent Audio</h3>
+          <p>Micro-acoustic clicks modeled after heavy-action dials and notched rotary encoders. Pre-warmed audio player pools guarantee zero latency.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon" style="background: rgba(168, 85, 247, 0.15); color: #a855f7;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M7 11v 6a5 5 0 0 0 10 0v-6a5 5 0 0 0-10 0z"/>
+              <path d="M12 2v4"/>
+            </svg>
+          </div>
+          <h3>Force Touch Trackpad Haptics</h3>
+          <p>Fires genuine haptic impulses via macOS <code>NSHapticFeedbackManager</code> in exact synchrony with every audio tick.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon" style="background: rgba(20, 184, 166, 0.15); color: #14b8a6;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+            </svg>
+          </div>
+          <h3>Velocity Dynamic Scaling</h3>
+          <p>Measures your scrolling speed in real time. Gentle scrolling whispers subtly; aggressive flings snap with authoritative resonance.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Installation & Setup -->
+    <section id="install" class="section">
+      <div class="section-header">
+        <span class="section-tag">Standalone Native App</span>
+        <h2>How to run OpenSnick on your Mac</h2>
+      </div>
+
+      <div class="install-steps">
+        <div class="step-card">
+          <div class="step-num">1</div>
+          <h3>Build or Download</h3>
+          <p>Run <code>./build.sh</code> in the project directory, or run <code>./install.sh</code> to copy <code>Snick.app</code> directly to your <code>/Applications</code> folder.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-num">2</div>
+          <h3>Launch Snick</h3>
+          <p>Launch <code>Snick.app</code>. It resides exclusively in your menu bar with a discreet icon and zero dock clutter.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-num">3</div>
+          <h3>Grant Accessibility</h3>
+          <p>Open <strong>System Settings → Privacy &amp; Security → Accessibility</strong> and enable Snick. macOS requires this to receive global scroll wheel events.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-num">4</div>
+          <h3>Scroll &amp; Enjoy</h3>
+          <p>Every scroll across Safari, Chrome, Finder, Slack, or Xcode now responds with buttery tactile detents!</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="section">
+      <div class="section-header">
+        <span class="section-tag">Good to Know</span>
+        <h2>Frequently Asked Questions</h2>
+      </div>
+
+      <div class="faq-list">
+        <div class="faq-item">
+          <h4>What makes this an open-source version of Snick?</h4>
+          <p>Snick (trysnick.xyz) is a commercial macOS app sold on LemonSqueezy. This project is a 100% free, MIT-licensed open-source reimplementation written natively in Swift/SwiftUI and AppKit. All 7 sound files (Nok, Vyl, Glu, Dib, Plo, Tok, Rub) were extracted directly from the web client.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Why is Accessibility permission required on macOS?</h4>
+          <p>macOS only delivers global system-wide scroll events (from other apps) to utilities that have Accessibility permissions. OpenSnick never inspects your content or keystrokes and runs entirely offline with zero network connectivity.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Does it support notched mouse wheels too?</h4>
+          <p>Yes! In addition to continuous trackpad scrolling, OpenSnick features a Stepped Mouse Wheel mode that clicks cleanly on every physical notch of an external mouse wheel.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-content">
+        <div class="footer-left">
+          <strong>OpenSnick</strong> · Open source companion to trysnick.xyz under MIT License.
+        </div>
+        <div class="footer-right">
+          <span>Native Swift &middot; macOS 14+ Sonoma &middot; Apple Silicon &amp; Intel</span>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
