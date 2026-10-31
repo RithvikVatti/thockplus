@@ -1,0 +1,51 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build & Release macOS App
+    runs-on: macos-14
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Swift
+        uses: swift-actions/setup-swift@v2
+        with:
+          swift-version: '5.9'
+
+      - name: Build Release Bundle
+        run: |
+          chmod +x build.sh
+          ./build.sh
+
+      - name: Package DMG and ZIP
+        run: |
+          mkdir -p dist
+          # Package ZIP
+          /usr/bin/ditto -c -k --keepParent "Thock+.app" "dist/Thock+-macOS.zip"
+
+          # Package DMG
+          mkdir -p dmg_stage
+          cp -R "Thock+.app" dmg_stage/
+          ln -s /Applications dmg_stage/Applications
+          hdiutil create -volname "Thock+" -srcfolder dmg_stage -ov -format UDZO "dist/Thock+-macOS.dmg"
+          rm -rf dmg_stage
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/Thock+-macOS.zip
+            dist/Thock+-macOS.dmg
+          generate_release_notes: true
+          draft: false
+          prerelease: false

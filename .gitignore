@@ -9,3 +9,6 @@ DerivedData/
 *.app/
 *.iconset/
 Resources/thock_orig_icon.png
+releases/
+dist/
+dmg_temp/
