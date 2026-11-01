@@ -12,3 +12,11 @@ Resources/thock_orig_icon.png
 releases/
 dist/
 dmg_temp/
+boring.notch/
+check_windows*
+deploy_and_test.sh
+dump_sf_symbols.swift
+find_symbols.swift
+post_note.swift
+test_*.py
+test_*.swift
